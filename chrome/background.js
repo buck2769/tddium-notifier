@@ -1,8 +1,35 @@
 ;(function(){
+  // TODO: fix this to actually work
+  activateTabs();
+
+  return true;
   var tddiumUrl = 'https://api.tddium.com/cc/88b9f80b5bbe2b868e322362762e8ec1666f1f76/cctray.xml',
     branches = {},
     firstRunKey = 'tddium-notifier:' + chrome.app.getDetails().version,
     $projectBranches;
+
+  function activateTabs(){
+    chrome.tabs.onActivated.addListener(function(activeInfo){
+      // deactivate all inactive tabs
+      chrome.tabs.query({
+        url: 'https://api.tddium.com/*',
+        active: false
+      }, function(tabs){
+        tabs.forEach(function(tab) {
+          chrome.tabs.sendMessage(tab.id, 'deactivate');
+        });
+      });
+
+      chrome.tabs.get(activeInfo.tabId, function(tab){
+        if ((/api\.tddium\.com[\/dashboard]*/i).test(tab.url)) {
+          chrome.tabs.sendMessage(tab.id, 'activate', function(){
+          });
+        }
+      });
+    });
+  };
+
+  activateTabs();
 
   this.updateFeaturePrefix = function(){
     featurePrefix = new RegExp( localStorage.getItem('branchPattern') );
@@ -15,7 +42,6 @@
     chrome.tabs.create({ url: "options.html" });
     localStorage.setItem( firstRunKey, true );
   }
-
 
   function parseProject( projectNode ) {
     return { name: projectNode.attr('name'),
@@ -71,7 +97,7 @@
     chrome.browserAction.setBadgeText({ text: (failedCount || '' ).toString() });
   };
 
-  this.fetchStatus = function fetchStatus(){
+  function fetchStatus(){
     var self = this;
     $.ajax({
       url: tddiumUrl,
@@ -84,6 +110,8 @@
       dataType: 'xml'
     });
   }
+
+  // set it on the window so we can debug
   this.fetchStatus = fetchStatus;
 
   _.defer(fetchStatus);

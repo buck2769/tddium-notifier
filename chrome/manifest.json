@@ -7,6 +7,10 @@
     "scripts": [ "underscore.js", "jquery.js", "background.js" ],
     "persistent": true
   },
+  "content_scripts": [{
+    "matches": [ "https://api.tddium.com/*" ],
+    "js": [ "jquery.js", "tddium-content.js" ]
+  }],
   "browser_action": {
     "default_icon": {
       "19": "images/fire.png"
