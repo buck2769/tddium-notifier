@@ -9,6 +9,8 @@
     $projectBranches;
 
   function activateTabs(){
+    // TODO: find a way to add a listener to application focus changes too (maybe?)
+    // TODO: DRY this up
     chrome.tabs.onActivated.addListener(function(activeInfo){
       // deactivate all inactive tabs
       chrome.tabs.query({

@@ -9,6 +9,10 @@ $(function(){
     });
   };
 
+  hide();
+
+  // activate and deactivate hiding
+  // determined by whether or not the tab is active
   chrome.extension.onMessage.addListener(function(request, sender, sendResponse){
     switch(request) {
       case "activate":
@@ -25,6 +29,7 @@ $(function(){
 
   $('.archived-notice').after('<div><label for="tddium-filter">Filter:</label><input name="tddium_filter" id="tddium-filter" placeholder="type in your filter"/></div>');
 
+  // hide the branches that don't match
   $('#tddium-filter').on('keyup', function(){
     filterTimeout = setTimeout(function(){
      if ( filterTimeout ) {
@@ -38,8 +43,7 @@ $(function(){
      
   }).val( filterPrefix || '');
 
-  hide();
-
+  // Tddium is really DOM update happy
   $('.suites tbody').on('DOMNodeInserted', function( jqEvent ) {
     hide();
   });
